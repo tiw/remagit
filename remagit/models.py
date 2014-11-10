@@ -2,30 +2,26 @@
 __author__ = 'wangting'
 
 from enum import Enum
+from . import db
 
 
-class Sku(object):
-    def __init__(self, properties, quantity, price, outer_id):
-        self._properties = properties
-        self._quantity = quantity
-        self._price = price
-        self._outer_id = outer_id
+class Sku(db.Model):
+    __tablename__ = 'skus'
+    properties = db.relationship('SkuProperty', secondary='sku_property')
+    price = db.Column(db.Integer)
+    quantity = db.Column(db.Integer)
+    outer_id = db.Column(db.String)
 
-    @property
-    def properties(self):
-        return self._properties
+    def __repr__(self):
+        return self.outer_id
 
-    @property
-    def quantity(self):
-        return self._quantity
 
-    @property
-    def price(self):
-        return self.price
-
-    @property
-    def outer_id(self):
-        return self._outer_id
+class SkuProperty(db.Model):
+    __tablename__ = 'sku_properties'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+    value = db.Column(db.String)
+    sku_id = db.relationship(db.Integer, db.ForeignKey('skus.id'))
 
 
 class Product(object):
